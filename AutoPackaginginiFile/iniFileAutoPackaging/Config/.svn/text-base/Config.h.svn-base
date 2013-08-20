@@ -1,0 +1,20 @@
+//
+//  Config.h
+//  InformationFor17173App
+//
+//  Created by 马 涛 on 13-5-31.
+//  Copyright (c) 2013年 panyulin－cyou. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface Config : NSObject
+
+
++(Config *)shareConfig;
+
+-(NSString *)channelString;
+-(NSString *)heartString;
+-(NSString *)serverString;
+
+@end
