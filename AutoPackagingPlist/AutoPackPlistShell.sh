@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #  AutoPackIPAShell.sh
-#  Gary
+#  Soto
 #
-#  Created by Gary on 14-5-23
-#  Copyright (c) 2014年 Gary. All rights reserved.
+#  Created by Soto on 14-5-23
+#  Copyright (c) 2014年 Soto. All rights reserved.
 
 
 #########################################################
@@ -19,7 +19,6 @@
 sourceipaname="AutoPackaging.ipa" #你用XCode打包出来的 ipa 文件名称
 appname="AutoPackaging.app"       #加压后Pauload目录项.app文件名需要根据自己的项目修改
 targetName="AutoPackaging"        #母包名称
-version="1.0.0"                   #版本号
 zipTime=`date +%m_%d`             #获取系统时间     比如 5_23 格式 5月23日
 
 PlistBuddy="/usr/libexec/PlistBuddy" #使用PlistBuddy 修改plist文件
@@ -29,6 +28,7 @@ plutil="plutil"                   #plutil工具 可以用来检查plist的语法
 distDir="${PWD}/pkgs"             #获取当前路径 创建pkgs文件夹   该文件夹是存放 批量打包产生的包
 
 plistConfigname="channel.plist"  #这个是项目里配置渠道信息的plist文件   (批量打包修改的就是它)
+appInfoPlist="Info.plist"        #这个是项目里的Info.plist文件
 
 channelListFile="channel.dat"   #这里是配置所有渠道信息的文件  channel.dat 或 channel.txt  两种格式都行,其他格式的我没测试过,可能其他格式的也可以
 
@@ -42,8 +42,8 @@ do
 channelName=`echo $line|cut -f1 -d':'`
 channelID=`echo $line|cut -f2 -d':'`
 #输出信息
-echo "channelID=$channelID"
-echo "channelName=$channelName"
+echo "channelID(渠道ID):      $channelID"
+echo "channelName(渠道名称):  $channelName"
 
 cd Payload
 cd $appname
@@ -51,6 +51,15 @@ cd $appname
 #设置app包里面的plist文件
 ${PlistBuddy} -c "set :channelID $channelID" ${plistConfigname}
 ${PlistBuddy} -c "set :channelName $channelName" ${plistConfigname}
+
+#获取项目版本号
+version=`${PlistBuddy} -c "Print :CFBundleVersion $REV" ${appInfoPlist}`
+#打印当前版本
+echo "当前App版本号为:        ${version}"
+
+#获取app名
+ipaname=`${PlistBuddy} -c "Print :CFBundleDisplayName $REV" ${appInfoPlist}`
+echo "当前App显示名称:        ${ipaname}"
 
 #把channel.plist文件转换成二进制
 ${plutil} -convert binary1 ${plistConfigname}
